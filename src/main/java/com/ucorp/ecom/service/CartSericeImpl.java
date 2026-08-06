@@ -11,7 +11,6 @@ import com.ucorp.ecom.repository.CartItemRepository;
 import com.ucorp.ecom.repository.CartRepository;
 import com.ucorp.ecom.repository.ProductRepository;
 import com.ucorp.ecom.util.AuthUtil;
-import jakarta.validation.constraints.Size;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -93,6 +92,44 @@ public class CartSericeImpl implements CartService{
                 });
         cartDTO.setProducts(productDTOStream.collect(Collectors.toList()));
 
+        return cartDTO;
+    }
+
+    @Override
+    public List<CartDTO> getAllCarts() {
+        List<Cart>carts = cartRepository.findAll();
+
+        if (carts.isEmpty()) {
+            throw new APIException("No carts exist");
+        }
+        List<CartDTO>cartDTOS = carts.stream()
+                .map(cart -> {
+                    CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+                    cart.getCartItem().forEach(c -> c.getProduct().setQuantity(c.getQuantity()));
+                    List<ProductDTO> products = cart.getCartItem()
+                            .stream()
+                            .map(p -> modelMapper.map(p.getProduct(),ProductDTO.class))
+                            .toList();
+                    cartDTO.setProducts(products);
+                return cartDTO;
+                }).toList();
+        return cartDTOS;
+    }
+
+    @Override
+    public CartDTO getCart(String emailId, Long cartId) {
+        Cart cart = cartRepository.findCartByEmailAndCartId(emailId,cartId);
+        if (cart == null) {
+            throw new ResourceNotFoundException("Cart","cartId",cartId);
+        }
+        CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+
+        cart.getCartItem().forEach(c ->
+                c.getProduct().setQuantity(c.getQuantity()));
+
+        List<ProductDTO> products = cart.getCartItem().stream()
+                .map(p-> modelMapper.map(p.getProduct(),ProductDTO.class)).toList();
+        cartDTO.setProducts(products);
         return cartDTO;
     }
 
