@@ -148,15 +148,29 @@ public class ProductServiceImpl implements  ProductService{
     public ProductDTO updateProducts(Long productId, ProductDTO productDTO) {
         Product productFromDb = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product","productId",productId));
+
         Product product = modelMapper.map(productDTO, Product.class);
-        productFromDb.setProductName(product.getProductName());
-        productFromDb.setDescription(product.getDescription());
-        productFromDb.setQuantity(product.getQuantity());
-        productFromDb.setPrice(product.getPrice());
-        productFromDb.setDiscount(product.getDiscount());
-        double specialPrice = product.getPrice() -
-                (product.getDiscount()* 0.01) * product.getPrice();
-        productFromDb.setSpecialPrice(specialPrice);
+        if (productDTO.getProductName() != null) {
+            productFromDb.setProductName(product.getProductName());
+        }
+        if(productDTO.getDescription() != null) {
+            productFromDb.setDescription(product.getDescription());
+        }
+        if (productDTO.getQuantity() != null) {
+            productFromDb.setQuantity(product.getQuantity());
+        }
+        if (productDTO.getPrice() != null) {
+            productFromDb.setPrice(product.getPrice());
+        }
+        if (productDTO.getDiscount() != null) {
+            productFromDb.setDiscount(product.getDiscount());
+            double specialPrice = productFromDb.getPrice() -
+                    (product.getDiscount()* 0.01) * productFromDb.getPrice();
+            productFromDb.setSpecialPrice(specialPrice);
+        }
+
+
+
 
         Product savedProduct = productRepository.save(productFromDb);
         return modelMapper.map(savedProduct,ProductDTO.class);
