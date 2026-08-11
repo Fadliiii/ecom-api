@@ -1,6 +1,7 @@
 package com.ucorp.ecom.exceptions;
 
 import com.ucorp.ecom.payload.APIResponse;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class MyGlobalExceptionHandler {
+
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -28,6 +30,18 @@ public class MyGlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String,String>> myConstraintViolationException(ConstraintViolationException ex) {
+        Map<String,String> response = new HashMap<>();
+        ex.getConstraintViolations().forEach(
+                violation ->{
+                    String fieldName = violation.getPropertyPath().toString();
+                    String errorMessage = violation.getMessage();
+                    response.put(fieldName,errorMessage);
+                }
+        );
+        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<APIResponse> myResoucreNotFoundException(ResourceNotFoundException ex) {
         String mesage = ex.getMessage();
