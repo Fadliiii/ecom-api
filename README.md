@@ -1,4 +1,4 @@
-<img width="786" height="1054" alt="ecommerce - public" src="https://github.com/user-attachments/assets/cebe8da5-d192-43e9-b458-b752ffb6dad4" /># 🛒 E-Commerce RESTful API Backend
+# 🛒 E-Commerce RESTful API Backend
 
 A robust and secure RESTful API built with **Java Spring Boot** for an E-Commerce platform. This backend service handles user authentication, product catalog management, shopping cart operations, and complex order processing logic.
 
@@ -27,6 +27,8 @@ A robust and secure RESTful API built with **Java Spring Boot** for an E-Commerc
    - Real-time stock deduction and inventory validation.
    - Payment Gateway integration mock-up.
 
+## ERD
+<img width="786" height="1054" alt="ecommerce - public" src="https://github.com/user-attachments/assets/cebe8da5-d192-43e9-b458-b752ffb6dad4" />
 
 ### Sample Endpoints:
 | Method | Endpoint | Description | Access |
