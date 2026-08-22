@@ -6,6 +6,7 @@ import com.ucorp.ecom.model.*;
 import com.ucorp.ecom.payload.OrderDTO;
 import com.ucorp.ecom.payload.OrderItemDTO;
 import com.ucorp.ecom.repository.*;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
     private ModelMapper modelMapper;
 
     @Override
-    @Transactional
+    @Transactional()
     public OrderDTO placeOrder(String emailId, Long addressId, String paymentMethod, String pgName, String pgPaymentId, String pgStatus, String pgResponseMessage) {
         //Getting User Cart
         Cart cart = cartRepository.findCartByEmail(emailId);
@@ -61,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
         Order savedOrder = orderRepository.save(order);
         //Get items from the cart into order items
         List<CartItem> cartItems = cart.getCartItem();
-        if (cartItems != null ) {
+        if (cartItems == null || cartItems.isEmpty() ) {
             throw  new APIException("Cart is empty");
         }
         List<OrderItem> orderItems = new ArrayList<>();

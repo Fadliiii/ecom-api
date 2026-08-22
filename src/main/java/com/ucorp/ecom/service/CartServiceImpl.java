@@ -5,7 +5,6 @@ import com.ucorp.ecom.exceptions.ResourceNotFoundException;
 import com.ucorp.ecom.model.Cart;
 import com.ucorp.ecom.model.CartItem;
 import com.ucorp.ecom.model.Product;
-import com.ucorp.ecom.model.User;
 import com.ucorp.ecom.payload.CartDTO;
 import com.ucorp.ecom.payload.ProductDTO;
 import com.ucorp.ecom.repository.CartItemRepository;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public class CartSericeImpl implements CartService{
+public class CartServiceImpl implements CartService{
 
     @Autowired
     CartRepository cartRepository;
@@ -108,11 +107,16 @@ public class CartSericeImpl implements CartService{
         List<CartDTO>cartDTOS = carts.stream()
                 .map(cart -> {
                     CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
-                    cart.getCartItem().forEach(c -> c.getProduct().setQuantity(c.getQuantity()));
+//                    cart.getCartItem().forEach(c -> c.getProduct().setQuantity(c.getQuantity()));
+
                     List<ProductDTO> products = cart.getCartItem()
                             .stream()
-                            .map(p -> modelMapper.map(p.getProduct(),ProductDTO.class))
-                            .toList();
+                            .map(cartItem->{
+                                ProductDTO productDTO = modelMapper.map(cartItem.getProduct(), ProductDTO.class);
+                                productDTO.setQuantity(cartItem.getQuantity());
+                                return productDTO;
+                            }).toList();
+
                     cartDTO.setProducts(products);
                 return cartDTO;
                 }).toList();
