@@ -47,6 +47,10 @@ public class ProductServiceImpl implements  ProductService{
     @Value("${project.image}")
     private String path;
 
+    @Value("${image.base.url}")
+    private String imageBaseUrl;
+
+
     @Override
     public ProductDTO add(Long categoryId, ProductDTO productDTO) {
         Category category =categoryRepository.findById(categoryId)
@@ -70,13 +74,19 @@ public class ProductServiceImpl implements  ProductService{
             double specialPrice = product.getPrice() -
                     (product.getDiscount()* 0.01) * product.getPrice();
             product.setSpecialPrice(specialPrice);
-            product.setImage("default.png");
+            if(product.getImage() != null && !product.getImage().isEmpty()) {
+                product.setImage("placehold.png");
+            }
             Product savedProduct = productRepository.save(product);
             return modelMapper.map(product,ProductDTO.class);
         }else {
             throw  new APIException("Product alredy exist");
         }
 
+    }
+
+    private String constructImageUrl(String imageName){
+        return imageBaseUrl.endsWith("/") ? imageBaseUrl + imageName : imageBaseUrl + "/" + imageName;
     }
 
     @Override
@@ -91,8 +101,11 @@ public class ProductServiceImpl implements  ProductService{
 //            throw  new APIException("No products found");
 //        }
         List<ProductDTO> productResponseDTOs = products.stream()
-              .map(product -> modelMapper.map(product,ProductDTO.class))
-              .toList();
+              .map(product -> {
+                 ProductDTO productDTO = modelMapper.map(product,ProductDTO.class);
+                 productDTO.setImage(constructImageUrl(product.getImage()));
+                 return productDTO;
+              }).toList();
       ProductResponseDTO productResponseDTO = new ProductResponseDTO();
       productResponseDTO.setContent(productResponseDTOs);
       productResponseDTO.setPageNumber(page.getNumber());

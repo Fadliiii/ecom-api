@@ -33,15 +33,15 @@ public class JwtUtils {
     @Value("${spring.app.jwtCookieName}")
     private String jwtCookie;
 
-//    //Getting JWT From Header
-//    public String getJwtFromHeader(HttpServletRequest request){
-//        String bearerToken = request.getHeader("Authorization");
-//        logger.debug("Authorization header : {} " , bearerToken);
-//        if( bearerToken != null && bearerToken.startsWith("Bearer ")){
-//            return bearerToken.substring(7);
-//        }
-//        return null;
-//    }
+    //Getting JWT From Header
+    public String getJwtFromHeader(HttpServletRequest request){
+        String bearerToken = request.getHeader("Authorization");
+        logger.debug("Authorization header : {} " , bearerToken);
+        if( bearerToken !=  null && bearerToken.startsWith("Bearer ")){
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
 
     public String getJwtFomCookies(HttpServletRequest request) {
         Cookie cookie = WebUtils.getCookie(request,jwtCookie);
