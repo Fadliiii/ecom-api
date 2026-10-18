@@ -31,11 +31,13 @@ public class ProductController {
     }
 
     @GetMapping("/public/products")
-    public ResponseEntity<ProductResponseDTO> getProduct(@RequestParam(defaultValue = AppConstants.PAGE_NUMBER,required = false) Integer pageNumber,
+    public ResponseEntity<ProductResponseDTO> getProduct(@RequestParam(name = "keyword", required = false) String keyword,
+                                                         @RequestParam(name = "category",required = false) String category,
+                                                         @RequestParam(defaultValue = AppConstants.PAGE_NUMBER,required = false) Integer pageNumber,
                                                          @RequestParam(defaultValue = AppConstants.PAGE_SIZE,required = false) Integer pageSize,
                                                          @RequestParam(defaultValue = AppConstants.SORT_PRODUCT_BY,required = false)String sortBy,
                                                          @RequestParam(defaultValue = AppConstants.SORT_DIR,required = false) String sortOrder) {
-       ProductResponseDTO productResponseDTO =  productService.getAllProducts(pageNumber,pageSize,sortBy,sortOrder);
+       ProductResponseDTO productResponseDTO =  productService.getAllProducts(pageNumber,pageSize,sortBy,sortOrder,keyword,category);
         return new ResponseEntity<>(productResponseDTO, HttpStatus.OK);
     }
 
